@@ -91,7 +91,7 @@ public class ImageRequester {
         final int screenBytes = displayMetrics.widthPixels * displayMetrics.heightPixels * 4;
         return screenBytes * 3;
     }
-    //Capture all other additional requests that arise
+    //Capture all other additional requests that arises
     public <T> void addToRequestQueue(Request<T> req) {
         getmRequestQueue().add(req);
     }
