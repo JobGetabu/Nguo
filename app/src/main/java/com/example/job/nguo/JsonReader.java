@@ -1,11 +1,14 @@
 package com.example.job.nguo;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Type;
@@ -21,15 +24,25 @@ public class JsonReader {
        Writer writer = new StringWriter();
         char[] buffer = new char[1024];
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,"UTF-8"));
-        int pointer;
-        while ((pointer = reader.read(buffer))!=-1){
-            writer.write(buffer, 0,pointer);
+        try {
+
+            Reader reader = new BufferedReader(new InputStreamReader(inputStream,"UTF-8"));
+            int pointer;
+            while ((pointer = reader.read(buffer))!= -1){
+                writer.write(buffer, 0,pointer);
+            }
+        }finally {
+            try {
+            inputStream.close();
+            }catch (IOException ex){
+                Log.d(TAG, "readJsonStream: Couldn't close the connection");
+            }
         }
 
         String jsonString = writer.toString();
         Gson gson = new Gson();
-
+        Log.d(TAG, "readJsonStream: json string returning"+jsonString);
+        Log.d(TAG, "readJsonStream: json to java"+gson.fromJson(jsonString, typeOfT).toString());
         return gson.fromJson(jsonString, typeOfT);
     }
 }

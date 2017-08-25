@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="margins_list">12dp</dimen>
+    <item name="tag_product_entry" type="id"/>
 </resources>

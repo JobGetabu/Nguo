@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="margins_list">12dp</dimen>
+    <integer name="grid_count_6">6</integer>
 </resources>

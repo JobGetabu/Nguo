@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Nguo</string>
+    <string name="header_label">Best quality clothes</string>
+    <string name="header_description">Variety, quantity, material, all in one place</string>
+    <string name="clothing_products">Clothing</string>
+    <string name="home">Home</string>
+    <string name="shopped">Shopped</string>
 </resources>

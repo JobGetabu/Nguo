@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
 import android.util.DisplayMetrics;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -18,22 +17,17 @@ import com.android.volley.toolbox.Volley;
 public class ImageRequester {
 
     private static volatile ImageRequester instance;
-    private RequestQueue mRequestQueue;
+    private final RequestQueue mRequestQueue;
     private static ImageLoader loader;
-    private static Context context;
-    private int maxSize;
+    private final int maxSize;
 
 
-    private ImageRequester(Context ctx, ImageLoader imageLoader){
-
-        context = ctx;
-        loader = imageLoader;
-
-        mRequestQueue = getmRequestQueue();
+    private ImageRequester(Context ctx){
+        this.mRequestQueue =  Volley.newRequestQueue(ctx.getApplicationContext());
         mRequestQueue.start();
 
         maxSize = calculateMaxBytes(ctx);
-        loader = new ImageLoader(getmRequestQueue(), new ImageLoader.ImageCache() {
+        loader = new ImageLoader(mRequestQueue, new ImageLoader.ImageCache() {
 
             final LruCache<String,Bitmap> lruCache = new LruCache<String,Bitmap>(maxSize){
                 @Override
@@ -53,46 +47,27 @@ public class ImageRequester {
         });
     }
 
-    public static synchronized ImageRequester getInstance() {
+    public static synchronized ImageRequester getInstance(Context ctx) {
+        ImageRequester result = instance;
         if (instance == null) {
             synchronized (ImageRequester.class){
-                instance = new ImageRequester(context,instance.getLoader());
+                result = instance;
+                if (result == null) {
+                    result = instance = new ImageRequester(ctx);
+                }
             }
         }
-        return instance;
+        return result;
     }
 
     public static void setImagFromUrlr(NetworkImageView view, String url){
         view.setImageUrl(url, loader);
     }
 
-    public static void setInstance(ImageRequester instance) {
-        ImageRequester.instance = instance;
-    }
-
-    public RequestQueue getmRequestQueue() {
-        if (mRequestQueue == null) {
-            new Volley();
-            mRequestQueue = Volley.newRequestQueue(context.getApplicationContext());
-        }
-        return mRequestQueue;
-    }
-
-    public ImageLoader getLoader() {
-        return loader;
-    }
-
-    public Context getContext() {
-        return context;
-    }
-
     private int calculateMaxBytes(Context ctx){
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        DisplayMetrics displayMetrics = ctx.getResources().getDisplayMetrics();
         final int screenBytes = displayMetrics.widthPixels * displayMetrics.heightPixels * 4;
         return screenBytes * 3;
     }
-    //Capture all other additional requests that arises
-    public <T> void addToRequestQueue(Request<T> req) {
-        getmRequestQueue().add(req);
-    }
+
 }
